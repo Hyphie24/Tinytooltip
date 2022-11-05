@@ -1,8 +1,9 @@
-## Interface: 90002
+## Interface: 100000
 ## Title: TinyTooltip
 ## Notes: TinyTooltip
 ## Author: M
-## Version: 9.0.3.2
+## Fan Fix: Hyphie
+## Version: 10.0.0.0
 ## SavedVariables: BigTipDB
 ## SavedVariablesPerCharacter: TinyTooltipCharacterDB
 

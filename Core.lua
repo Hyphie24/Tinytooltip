@@ -800,8 +800,10 @@ LibEvent:attachTrigger("tooltip.style.init", function(self, tip)
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
         edgeSize = 14,
     }
-    if (tip.SetBackdrop) then
+    if tip.SetBackdrop then
         tip:SetBackdrop(nil)
+	elseif tip.NineSlice then
+        tip.NineSlice:Hide()			 						
     end
     tip.style = CreateFrame("Frame", nil, tip, BackdropTemplateMixin and "BackdropTemplate" or nil)
     tip.style:SetFrameLevel(tip:GetFrameLevel())
@@ -822,28 +824,51 @@ LibEvent:attachTrigger("tooltip.style.init", function(self, tip)
     tip.style.outside:SetBackdropBorderColor(0, 0, 0, 0.5)
     tip.style.outside:Hide()
     tip.style.mask = tip.style:CreateTexture(nil, "OVERLAY")
-    --tip.style.mask:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
+    tip.style.mask:SetTexture("Interface\\Tooltips\\UI-Tooltip-Background")
     tip.style.mask:SetPoint("TOPLEFT", 3, -3)
     tip.style.mask:SetPoint("BOTTOMRIGHT", tip.style, "TOPRIGHT", -3, -32)
     tip.style.mask:SetBlendMode("ADD")
-    --tip.style.mask:SetGradient("VERTICAL", Color(r), Color(0))
+    tip.style.mask:SetGradient("VERTICAL", {r=0, b=0, g=0, a=0},{ r=0.9, b=0.9, g=0.9, a=0.4})
     tip.style.mask:Hide()
     tip:HookScript("OnShow", function(self) LibEvent:trigger("tooltip:show", self) end)
     tip:HookScript("OnHide", function(self) LibEvent:trigger("tooltip:hide", self) end)
-    if (tip:HasScript("OnTooltipSetUnit")) then
-        tip:HookScript("OnTooltipSetUnit", function(self)
+    -- if (tip:HasScript("OnTooltipSetUnit")) then
+    --     tip:HookScript("OnTooltipSetUnit", function(self)
+    --         local unit = select(2, self:GetUnit())
+    --         if (not unit) then return end
+    --         LibEvent:trigger("tooltip:unit", self, unit)
+    --     end)
+    -- end
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit, function(self)
+        -- if (tip) then
             local unit = select(2, self:GetUnit())
             if (not unit) then return end
             LibEvent:trigger("tooltip:unit", self, unit)
-        end)
-    end
-    if (tip:HasScript("OnTooltipSetItem")) then
-        tip:HookScript("OnTooltipSetItem", function(self)
+        -- end
+    end)
+
+
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(self)
+        -- if (tip) then
             local link = select(2, self:GetItem())
             if (not link) then return end
             LibEvent:trigger("tooltip:item", self, link)
-        end)
-    end
+        -- end
+    end)
+
+    -- if (tip:HasScript("OnTooltipSetItem")) then
+    --     tip:HookScript("OnTooltipSetItem", function(self)
+    --         local link = select(2, self:GetItem())
+    --         if (not link) then return end
+    --         LibEvent:trigger("tooltip:item", self, link)
+    --     end)
+    -- end
+
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Spell, function(self)
+        -- if (tip) then
+            LibEvent:trigger("tooltip:spell", self)
+        -- end
+    end)
     if (tip:HasScript("OnTooltipSetSpell")) then
         tip:HookScript("OnTooltipSetSpell", function(self) LibEvent:trigger("tooltip:spell", self) end)
     end
